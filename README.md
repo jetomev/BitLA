@@ -1,0 +1,2 @@
+# BitLA
+Bitcoin Lottery Application
