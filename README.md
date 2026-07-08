@@ -164,19 +164,29 @@ Mining is **opt-in**. Real CPU load, real electricity, real heat. BitlaForge wil
 
 ## Roadmap
 
-### v0.1.0 — May 28, 2026
-- [x] Pivot from Qt6/Widgets `BitLA` to Textual TUI under the Forge suite
-- [x] Sidebar navigation + 3 screens (Dashboard, Log, Config)
-- [x] `StatusMixin`, `HelpScreen`, `ConfirmDialog` ported from the Forge baseline
-- [x] Catppuccin Mocha styling
+### Future
+- [ ] Pool reachability check on save (not just on start)
+- [ ] Multi-config profiles (switch between pools / wallets / algorithms with one key)
+- [ ] Optional auto-restart on minerd crash
+- [ ] Notification on accepted-share (rare event, worth surfacing prominently)
 
-### v0.1.1 — May 28, 2026
-- [x] Persist config to `~/.config/bitlaforge/config.toml` (TOML)
-- [x] Wire `minerd` via `asyncio.create_subprocess_exec`: spawn, parse stdout, stop cleanly
-- [x] Real Dashboard fields driven by parsed minerd output (hashrate / threads / accepted / rejected / uptime)
-- [x] Stream minerd stdout into the Log screen's bounded buffer
-- [x] Runtime `which("minerd")` check + Dashboard banner + friendly install guidance
-- [x] Setup screen with AUR provider list + `minerd --version` self-test
+### v0.2.0 — Planned (visual identity upgrade)
+- [ ] Sparkline (`▁▂▃▄▅▆▇█`) of hashrate-over-time under the Dashboard's hashrate value
+- [ ] System CPU load sparkline on Setup
+- [ ] Per-thread hashrate mini-bars
+- [ ] Optional `textual-plotext` integration for proper time-series charts (btop-style)
+
+### v0.1.4 — Planned
+- [ ] Wallet format validation (bech32 / legacy address shape check)
+- [ ] Pool reachability probe (TCP connect with short timeout) + "Test connection" on Config
+- [ ] Persistent log archive (rotating files in `~/.local/share/bitlaforge/sessions/`)
+- [ ] Per-session lifetime totals across restarts (uptime + accepted/rejected accumulated)
+
+### v0.1.3 — May 29, 2026 (current) — **first AUR release**
+- [x] `testing/RELEASE-CHECKLIST.md` + v0.1.3 Test Matrix
+- [x] Man page `bitlaforge.1`
+- [x] PKGBUILD with hardened headless-mount `check()` + `PYTHONDONTWRITEBYTECODE=1` defenses
+- [x] **Published on the AUR** — completes the Forge suite (joining grubForge, alacrittyForge, nogForge)
 
 ### v0.1.2 — May 29, 2026
 - [x] System info on Setup screen (CPU model + logical/physical cores + load avg + memory) from stdlib
@@ -188,29 +198,19 @@ Mining is **opt-in**. Real CPU load, real electricity, real heat. BitlaForge wil
 - [x] Live `minerd` CPU% / RAM from `/proc/<pid>/stat` + `/proc/<pid>/status` — makes the niceness setting observable
 - [x] Hashrate parser hotfix: integer rates, per-thread aggregate, auto-scale to Mh/s / Gh/s
 
-### v0.1.3 — May 29, 2026 (current) — **first AUR release**
-- [x] `testing/RELEASE-CHECKLIST.md` + v0.1.3 Test Matrix
-- [x] Man page `bitlaforge.1`
-- [x] PKGBUILD with hardened headless-mount `check()` + `PYTHONDONTWRITEBYTECODE=1` defenses
-- [x] **Published on the AUR** — completes the Forge suite (joining grubForge, alacrittyForge, nogForge)
+### v0.1.1 — May 28, 2026
+- [x] Persist config to `~/.config/bitlaforge/config.toml` (TOML)
+- [x] Wire `minerd` via `asyncio.create_subprocess_exec`: spawn, parse stdout, stop cleanly
+- [x] Real Dashboard fields driven by parsed minerd output (hashrate / threads / accepted / rejected / uptime)
+- [x] Stream minerd stdout into the Log screen's bounded buffer
+- [x] Runtime `which("minerd")` check + Dashboard banner + friendly install guidance
+- [x] Setup screen with AUR provider list + `minerd --version` self-test
 
-### v0.1.4 — Planned
-- [ ] Wallet format validation (bech32 / legacy address shape check)
-- [ ] Pool reachability probe (TCP connect with short timeout) + "Test connection" on Config
-- [ ] Persistent log archive (rotating files in `~/.local/share/bitlaforge/sessions/`)
-- [ ] Per-session lifetime totals across restarts (uptime + accepted/rejected accumulated)
-
-### v0.2.0 — Planned (visual identity upgrade)
-- [ ] Sparkline (`▁▂▃▄▅▆▇█`) of hashrate-over-time under the Dashboard's hashrate value
-- [ ] System CPU load sparkline on Setup
-- [ ] Per-thread hashrate mini-bars
-- [ ] Optional `textual-plotext` integration for proper time-series charts (btop-style)
-
-### Future
-- [ ] Pool reachability check on save (not just on start)
-- [ ] Multi-config profiles (switch between pools / wallets / algorithms with one key)
-- [ ] Optional auto-restart on minerd crash
-- [ ] Notification on accepted-share (rare event, worth surfacing prominently)
+### v0.1.0 — May 28, 2026
+- [x] Pivot from Qt6/Widgets `BitLA` to Textual TUI under the Forge suite
+- [x] Sidebar navigation + 3 screens (Dashboard, Log, Config)
+- [x] `StatusMixin`, `HelpScreen`, `ConfirmDialog` ported from the Forge baseline
+- [x] Catppuccin Mocha styling
 
 ---
 
