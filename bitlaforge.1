@@ -1,6 +1,6 @@
 .\" bitlaforge.1 — BitlaForge man page
 .\" GNU GPL v3 — see LICENSE
-.TH BITLAFORGE 1 "August 2026" "BitlaForge v0.2.0" "User Commands"
+.TH BITLAFORGE 1 "August 2026" "BitlaForge v0.2.1" "User Commands"
 .
 .SH NAME
 bitlaforge \- terminal UI for running solo Bitcoin mining (the lottery)
@@ -98,10 +98,16 @@ subprocess. Stop is SIGTERM with a 3-second grace period; falls back to
 SIGKILL if minerd ignores it. If minerd is not on PATH, M surfaces
 install-guidance instead of attempting to spawn.
 .TP
+.B T
+Test the miner \(em runs
+.B minerd --version
+and reports the result as a toast (same as the Dashboard's Test Miner
+button).
+.TP
 .B R
 Refresh the current section's view (re-read disk, re-poll /proc, etc).
 .TP
-.B ?
+.B ? (or Ctrl+H)
 Toggle the Shortcuts window (press again, or Esc or q, to close).
 .TP
 .B q
@@ -188,8 +194,8 @@ https://github.com/jetomev/forgekit)
 .PP
 All cpuminer variants provide
 .IR /usr/bin/minerd .
-BitlaForge calls whichever one is on PATH. Press
-.B 4
+BitlaForge calls whichever one is on PATH. Open
+.B Help \(-> Install & Setup
 inside the app to see install guidance.
 .
 .SH AUTHORS

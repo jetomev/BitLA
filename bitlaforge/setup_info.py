@@ -103,5 +103,5 @@ def build_setup_body() -> str:
         "\n"
         "  Mining draws real CPU and electricity. BitlaForge will never\n"
         "  start [bold]minerd[/] on its own — only [bold]Start Miner[/] (or M)\n"
-        "  starts it, and [bold]Stop Miner[/] always stops it cleanly.\n"
+        "  starts it, and [bold]Stop Miner[/] always stops it cleanly."
     )

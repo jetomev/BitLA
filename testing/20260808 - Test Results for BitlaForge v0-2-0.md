@@ -40,3 +40,17 @@ release.
 - **Packaging** — v0.2.0 depends on forgekit, which has no AUR package yet;
   decision pending (AUR `python-forgekit` vs vendoring) and moot until the
   AUR freeze lifts. GitHub release ships now; AUR update follows later.
+
+---
+
+## Addendum — v0.2.1 window-polish batch (2026-08-09)
+
+Second field review (Javier): shortcuts content spec, T + Ctrl+H keys,
+window heights. Kit findings F-6 (dynamic key column), F-7 (content
+hugging), F-8 (fixed thin button footer — born from the Close button
+vanishing below the fold on Install & Setup after F-7).
+
+Headless geometry verification (new): footer-inside-panel asserted on
+both short (About, 22 rows) and long (Install & Setup, capped, body
+scrolls 26/41) windows; Ctrl+H toggle; T guard path. Full smoke suite
+re-passed. Field: "it's perfect! we can declare it done!"

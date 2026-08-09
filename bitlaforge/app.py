@@ -45,16 +45,20 @@ MENU = [
 ]
 
 SHORTCUTS = [
-    ("1-3",    "Switch section (Dashboard / Log / Config)"),
-    ("M",      "Start / stop the miner"),
-    ("R",      "Refresh the current section"),
-    ("?",      "Toggle this shortcuts window"),
-    ("Q",      "Quit"),
-    ("Ctrl+…", "Menu accelerators (underlined letters in the menu bar)"),
-    ("/",      "Log: focus the filter input"),
-    ("C",      "Log: clear the buffer"),
-    ("E",      "Config: begin editing (focus first field)"),
-    ("S",      "Config: save configuration"),
+    ("Ctrl+D or 1", "Dashboard"),
+    ("Ctrl+L or 2", "Log"),
+    ("Ctrl+C or 3", "Config"),
+    ("M",           "Start / stop the miner"),
+    ("T",           "Test the miner"),
+    ("R",           "Refresh the current section"),
+    ("Ctrl+H or ?", "Toggle this shortcuts window"),
+    ("Esc",         "Close the open window"),
+    ("Enter / ↑↓",  "Navigate open menus"),
+    ("Ctrl+Q or Q", "Quit"),
+    ("/",           "Log: focus the filter input"),
+    ("C",           "Log: clear the buffer"),
+    ("E",           "Config: begin editing (focus first field)"),
+    ("S",           "Config: save configuration"),
 ]
 
 ABOUT = {
@@ -144,6 +148,7 @@ class BitlaForgeApp(ForgeApp):
         Binding("2", "activate('log')",       show=False),
         Binding("3", "activate('config')",    show=False),
         Binding("m", "toggle_miner",          show=False),
+        Binding("t", "test_miner",            show=False),
         Binding("r", "refresh_active",        show=False),
         Binding("q", "activate('quit')",      show=False),
         Binding("question_mark", "toggle_shortcuts", show=False),
@@ -151,6 +156,9 @@ class BitlaForgeApp(ForgeApp):
         Binding("ctrl+d", "activate('dashboard')", show=False, priority=True),
         Binding("ctrl+l", "activate('log')",       show=False, priority=True),
         Binding("ctrl+c", "activate('config')",    show=False, priority=True),
+        # Javier's ruling: Ctrl+H toggles Shortcuts directly (overrides the
+        # kit's default of opening the Help dropdown).
+        Binding("ctrl+h", "toggle_shortcuts", show=False, priority=True),
     ]
 
     miner_stats: MinerStats = MinerStats()
@@ -217,6 +225,10 @@ class BitlaForgeApp(ForgeApp):
             self.push_screen(BitlaShortcuts(self.SHORTCUTS))
         else:
             super().action_act(action_id)
+
+    def action_test_miner(self) -> None:
+        """T — keyboard twin of the Dashboard's Test Miner button."""
+        self.run_worker(self.action_test_minerd(), exclusive=False)
 
     def action_toggle_shortcuts(self) -> None:
         """`?` toggles the shortcuts window (pops if open, pushes otherwise)."""

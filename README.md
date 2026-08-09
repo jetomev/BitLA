@@ -6,7 +6,7 @@
 ![Platform: Linux](https://img.shields.io/badge/Platform-Linux-lightgrey.svg)
 ![Python: 3.11+](https://img.shields.io/badge/Python-3.11+-green.svg)
 ![Status: Alpha](https://img.shields.io/badge/Status-Alpha-orange.svg)
-![Version: 0.2.0](https://img.shields.io/badge/Version-0.2.0-purple.svg)
+![Version: 0.2.1](https://img.shields.io/badge/Version-0.2.1-purple.svg)
 [![AUR](https://img.shields.io/aur/version/bitlaforge)](https://aur.archlinux.org/packages/bitlaforge)
 
 ---
@@ -46,7 +46,7 @@ It is the fourth tool in the **Forge suite** for KognogOS — alongside [grubFor
 - Linux
 - Python 3.11+
 - `python-textual`, `python-rich`, `python-tomli-w`
-- [`forgekit`](https://github.com/jetomev/forgekit) ≥ 0.2.0 — the shared Forge Suite TUI shell (GitHub; packaging for AUR arrives when AUR submissions reopen)
+- [`forgekit`](https://github.com/jetomev/forgekit) ≥ 0.2.1 — the shared Forge Suite TUI shell (GitHub; packaging for AUR arrives when AUR submissions reopen)
 - `minerd` — optional but required to actually mine. AUR-only; install via one of `cpuminer` (recommended, pooler's original), `cpuminer-multi`, or `cpuminer-opt`. **Help → Install & Setup** inside the app has the install commands, and **Test Miner** on the Dashboard verifies the binary.
 
 ---
@@ -57,7 +57,7 @@ It is the fourth tool in the **Forge suite** for KognogOS — alongside [grubFor
 ```bash
 yay -S bitlaforge
 ```
-Then run `bitlaforge`. The AUR package's `optdepends` will prompt for one of the `cpuminer*` variants to actually mine — install whichever fits your needs (see **Setup** screen for guidance).
+Then run `bitlaforge`. The AUR package's `optdepends` will prompt for one of the `cpuminer*` variants to actually mine — install whichever fits your needs (see **Help → Install & Setup** for guidance).
 
 ### Arch Linux — from source
 ```bash
@@ -100,8 +100,9 @@ If `minerd` is missing, BitlaForge still runs — the Dashboard shows a banner, 
 | `2` | Log |
 | `3` | Config |
 | `M` | Start / Stop miner (same as the Dashboard button) |
+| `T` | Test the miner (`minerd --version` → toast) |
 | `R` | Refresh current section |
-| `?` | Toggle the Shortcuts window |
+| `?` or `Ctrl+H` | Toggle the Shortcuts window |
 | `q` | Quit |
 | `Ctrl+…` | Menu-bar accelerators — the underlined letter opens each menu/section; inside a dropdown, an item's underlined letter picks it |
 
@@ -167,7 +168,13 @@ Mining is **opt-in**. Real CPU load, real electricity, real heat. BitlaForge wil
 - [ ] Per-thread hashrate mini-bars
 - [ ] Optional `textual-plotext` integration for proper time-series charts (btop-style)
 
-### v0.2.0 — August 8, 2026 (current) — **first Forge app on forgekit**
+### v0.2.1 — August 9, 2026 (current) — window-polish batch
+- [x] Shortcuts window rewritten to the combined-key spec (`Ctrl+D or 1` …) with `Esc` / menu-navigation entries; key column auto-aligns (kit F-6)
+- [x] **T** key restored: keyboard twin of the Dashboard's Test Miner button; **Ctrl+H** now toggles Shortcuts directly
+- [x] Windows hug their content (kit F-7) and buttons live in a thin **fixed footer under a divider** — always visible even when Install & Setup scrolls (kit F-8; the ruling that reshaped every Forge dialog to come)
+- [x] Requires forgekit ≥ 0.2.1
+
+### v0.2.0 — August 8, 2026 — **first Forge app on forgekit**
 - [x] Shell replaced by [forgekit](https://github.com/jetomev/forgekit) `ForgeApp` — menu bar with accelerators, section switcher, Help windows, Catppuccin theme, themed scrollbars, compact buttons (net −400 lines)
 - [x] Design simplification (Javier's field review): three sections; **Start/Stop Miner** two-state button + **Test Miner** on the Dashboard; Setup screen → read-only **Help → Install & Setup** window; Miner menu and key legends retired
 - [x] Muscle memory preserved: `1-3`, `M`, `R`, `?`, `q`
@@ -213,6 +220,15 @@ Mining is **opt-in**. Real CPU load, real electricity, real heat. BitlaForge wil
 ---
 
 ## Changelog
+
+### v0.2.1 — August 9, 2026
+
+**Window-polish batch** — the second same-week field review, all landed in the right layers:
+
+- **Shortcuts window**: content rewritten to Javier's spec — combined keys per line (`Ctrl+D or 1  Dashboard`), `T — Test the miner`, `Esc`, `Enter/↑↓` menu navigation; the key column auto-sizes (forgekit F-6).
+- **Keys**: `T` restored as the keyboard twin of Test Miner; `Ctrl+H` toggles the Shortcuts window directly.
+- **Window anatomy** (forgekit F-7 + F-8): panels hug their content instead of a fixed 80% height, long bodies (Install & Setup) cap and scroll, and **buttons moved to a thin fixed footer under a divider** — the Close button can never scroll out of view again. Footer kept tight: divider + button row + one breath of air.
+- Requires **forgekit ≥ 0.2.1**.
 
 ### v0.2.0 — August 8, 2026
 
