@@ -6,7 +6,7 @@
 ![Platform: Linux](https://img.shields.io/badge/Platform-Linux-lightgrey.svg)
 ![Python: 3.11+](https://img.shields.io/badge/Python-3.11+-green.svg)
 ![Status: Alpha](https://img.shields.io/badge/Status-Alpha-orange.svg)
-![Version: 0.1.3](https://img.shields.io/badge/Version-0.1.3-purple.svg)
+![Version: 0.2.0](https://img.shields.io/badge/Version-0.2.0-purple.svg)
 [![AUR](https://img.shields.io/aur/version/bitlaforge)](https://aur.archlinux.org/packages/bitlaforge)
 
 ---
@@ -23,26 +23,21 @@ It is the fourth tool in the **Forge suite** for KognogOS — alongside [grubFor
 
 ## Project state
 
-**v0.1.1 alpha — it actually mines now.** v0.1.0 was the Forge-style skeleton (screens, nav, help, confirm); v0.1.1 wires the four pieces that turn the skeleton into a usable tool:
-
-- **Persistence.** Pool / wallet / algorithm / thread count are saved to `~/.config/bitlaforge/config.toml` and reload at launch.
-- **Real `minerd` subprocess.** Pressing **M** spawns `minerd` via `asyncio.create_subprocess_exec`, streams its stdout line-by-line into the Log screen, and parses hashrate / accepted / rejected / threads into reactive Dashboard fields. Pressing **M** again terminates cleanly (SIGTERM with a 3-second grace period, SIGKILL fallback).
-- **`minerd` runtime detection.** `shutil.which("minerd")` runs at launch and on every **M** press. When the binary is missing, the Dashboard shows a persistent banner and **M** surfaces friendly install guidance instead of a raw "binary not found" error.
-- **Setup screen.** A new fourth screen (**4**) lists the three AUR providers (`cpuminer`, `cpuminer-multi`, `cpuminer-opt`) with copy-pasteable `yay -S` commands and a **T** action that runs `minerd --version` to verify the install actually works.
+**v0.2.0 — the first Forge app on [forgekit](https://github.com/jetomev/forgekit).** The hand-rolled sidebar / header / footer / help chrome is gone, replaced by the shared Forge Suite shell: a top **menu bar** with underlined accelerators (mouse and keyboard), a full-width workspace, and the kit's floating windows for Help. The redesign also simplified the surface: **three sections** (Dashboard / Log / Config), a two-state **Start Miner / Stop Miner** button plus **Test Miner** right on the Dashboard, and the old Setup screen reborn as a read-only **Help → Install & Setup** window. The whole miner engine (subprocess lifecycle, live stats tick, log streaming, TOML persistence) carried over from v0.1.x unchanged — net −400 lines.
 
 > This repo used to be `BitLA`, a Qt6/Widgets desktop scaffold that landed in November 2025 with simulation-driven UI and no real miner integration. On 2026-05-28 it pivoted to a Textual TUI under the Forge-suite umbrella. The Qt prototype is preserved permanently as the `v0.1.0-qt-archived` git tag; `main` is the TUI from day one.
 
 ---
 
-## Features (v0.1.1)
+## Features (v0.2.0)
 
-- 🏠 **Dashboard** — read-only overview driven live by parsed minerd output: pool / port / wallet / algorithm / threads / hashrate / accepted / rejected shares / uptime. Persistent **⚠ minerd not detected** banner when the binary isn't on PATH.
+- 🏠 **Dashboard** — live overview driven by parsed minerd output: pool / port / wallet / algorithm / threads / hashrate / accepted / rejected shares / uptime, with per-process CPU and RAM sampled from `/proc`. Two action buttons: **Start Miner** (flips to a red **Stop Miner** while running) and **Test Miner** (`minerd --version` → toast). Persistent **⚠ minerd not detected** banner when the binary isn't on PATH.
 - 📜 **Log** — streaming view of minerd's stdout/stderr line-by-line, with a 5,000-line bounded buffer, **/** to focus search, **C** to clear.
-- ⚙ **Config** — pool URL, wallet, algorithm (sha256d / scrypt / yescrypt / x11 / x13 / x15 / x17 / groestl), thread count. **Persisted** to `~/.config/bitlaforge/config.toml`; loads at every launch.
-- 🛠 **Setup** — install guide for `minerd` (AUR-only) with one-liner commands for each provider, and a **T** action that runs `minerd --version` to verify the install.
-- ❓ **Help modal** — toggleable; Esc / q / ? all dismiss; lists every binding.
+- ⚙ **Config** — pool URL, wallet, algorithm (sha256d / scrypt / yescrypt / x11 / x13 / x15 / x17 / groestl), thread count, niceness, miner name. **Persisted** to `~/.config/bitlaforge/config.toml`; loads at every launch.
+- 🧭 **forgekit shell** — the Forge Suite menu bar (Dashboard / Log / Config / Help / Quit) with underlined accelerators, Catppuccin Mocha throughout, themed slim scrollbars, compact one-row buttons.
+- 🪟 **Help windows** — Shortcuts, **Install & Setup** (system info + minerd status + AUR providers + paths, rebuilt fresh on every open), License, About — all floating forgekit panels.
 - 💬 **Unified feedback** — `StatusMixin` from the Forge suite: status-line + toast popup, `popup=False` for passive mount hints so launch is quiet.
-- 🎯 **Focus-on-show** — screen bindings fire on the first keypress without a panel click; clickable sidebar nav as an alternative path.
+- 🎯 **Focus-on-show** — section bindings fire on the first keypress without a panel click.
 
 ---
 
@@ -51,7 +46,8 @@ It is the fourth tool in the **Forge suite** for KognogOS — alongside [grubFor
 - Linux
 - Python 3.11+
 - `python-textual`, `python-rich`, `python-tomli-w`
-- `minerd` — optional but required to actually mine. AUR-only; install via one of `cpuminer` (recommended, pooler's original), `cpuminer-multi`, or `cpuminer-opt`. The Setup screen (press **4**) has the install commands and a self-test.
+- [`forgekit`](https://github.com/jetomev/forgekit) ≥ 0.2.0 — the shared Forge Suite TUI shell (GitHub; packaging for AUR arrives when AUR submissions reopen)
+- `minerd` — optional but required to actually mine. AUR-only; install via one of `cpuminer` (recommended, pooler's original), `cpuminer-multi`, or `cpuminer-opt`. **Help → Install & Setup** inside the app has the install commands, and **Test Miner** on the Dashboard verifies the binary.
 
 ---
 
@@ -66,21 +62,22 @@ Then run `bitlaforge`. The AUR package's `optdepends` will prompt for one of the
 ### Arch Linux — from source
 ```bash
 sudo pacman -S python-textual python-rich python-tomli-w
+git clone https://github.com/jetomev/forgekit.git
 git clone https://github.com/jetomev/bitlaforge.git
 cd bitlaforge
-python main.py
+PYTHONPATH=../forgekit python main.py
 ```
 
 ### Other distributions
 ```bash
-pip install textual rich tomli-w
+pip install textual rich tomli-w git+https://github.com/jetomev/forgekit
 git clone https://github.com/jetomev/bitlaforge.git
 cd bitlaforge
 python main.py
 ```
 
 ### `minerd` itself (required to actually mine)
-The `minerd` binary lives only on the AUR — three providers, pick one. Press **4** inside BitlaForge for the full guide; the short version:
+The `minerd` binary lives only on the AUR — three providers, pick one. Open **Help → Install & Setup** inside BitlaForge for the full guide; the short version:
 
 ```bash
 yay -S cpuminer          # pooler's original (recommended)
@@ -90,7 +87,7 @@ yay -S cpuminer-multi    # multi-algorithm fork
 yay -S cpuminer-opt      # heavily optimised variant
 ```
 
-If `minerd` is missing, BitlaForge still runs — the Dashboard shows a banner, the Setup screen has the install commands, and pressing **M** surfaces install-guidance instead of failing silently.
+If `minerd` is missing, BitlaForge still runs — the Dashboard shows a banner, **Help → Install & Setup** has the install commands, and **Start Miner** surfaces install-guidance instead of failing silently.
 
 ---
 
@@ -102,28 +99,23 @@ If `minerd` is missing, BitlaForge still runs — the Dashboard shows a banner, 
 | `1` | Dashboard |
 | `2` | Log |
 | `3` | Config |
-| `4` | Setup |
-| `M` | Start / Stop miner |
-| `R` | Refresh current screen |
-| `?` | Toggle help overlay |
+| `M` | Start / Stop miner (same as the Dashboard button) |
+| `R` | Refresh current section |
+| `?` | Toggle the Shortcuts window |
 | `q` | Quit |
+| `Ctrl+…` | Menu-bar accelerators — the underlined letter opens each menu/section; inside a dropdown, an item's underlined letter picks it |
 
-### Log screen
+### Log section
 | Key | Action |
 |-----|--------|
 | `/` | Focus the search filter |
 | `C` | Clear the log buffer |
 
-### Config screen
+### Config section
 | Key | Action |
 |-----|--------|
 | `E` | Focus the first input (begin editing) |
 | `S` | Save the current values |
-
-### Setup screen
-| Key | Action |
-|-----|--------|
-| `T` | Test minerd binary (`minerd --version`) |
 
 ---
 
@@ -133,22 +125,22 @@ If `minerd` is missing, BitlaForge still runs — the Dashboard shows a banner, 
 bitlaforge/
 ├── main.py                                # Entry point
 ├── bitlaforge/
-│   ├── app.py                             # BitlaForgeApp shell + nav + M lifecycle + live tick
-│   ├── bitlaforge.css                     # Catppuccin Mocha stylesheet
+│   ├── app.py                             # BitlaForgeApp on forgekit.ForgeApp — menu, miner lifecycle, live tick
+│   ├── setup_info.py                      # Body of the Help → Install & Setup window
 │   ├── config_manager.py                  # TOML read/write at ~/.config/bitlaforge/
 │   ├── miner_runner.py                    # Async minerd subprocess + stdout parsing
 │   ├── process_stats.py                   # /proc/<pid>/ CPU% + RAM readouts
 │   ├── system_info.py                     # /proc/cpuinfo + /proc/meminfo + load avg
 │   ├── screens/
-│   │   ├── dashboard.py                   # Live miner overview + missing-minerd banner
+│   │   ├── dashboard.py                   # Live miner overview + Start/Stop + Test buttons
 │   │   ├── log.py                         # 5,000-line bounded buffer + filter
-│   │   ├── config.py                      # Pool / wallet / algorithm / threads / name / niceness
-│   │   └── setup.py                       # System info + AUR install guide + minerd self-test
+│   │   └── config.py                      # Pool / wallet / algorithm / threads / name / niceness
 │   └── widgets/
-│       ├── status.py                      # StatusMixin (line + toast)
-│       ├── help_screen.py                 # Toggleable modal help
-│       └── confirm_dialog.py              # Esc-cancel / Enter-confirm modal
+│       └── status.py                      # StatusMixin (line + toast)
 ```
+
+The shell chrome (menu bar, section switcher, dialogs, theme, scrollbars) lives in
+[forgekit](https://github.com/jetomev/forgekit) — shared across the Forge Suite.
 
 ---
 
@@ -156,9 +148,9 @@ bitlaforge/
 
 Mining is **opt-in**. Real CPU load, real electricity, real heat. BitlaForge will never:
 
-- Auto-start `minerd` on launch. The miner only runs after you explicitly press **M** (and, eventually, only if a pool + wallet are configured).
-- Hide the active state. The Dashboard always shows whether the miner is running.
-- Make the Stop path more than one keystroke away. **M** toggles. Always.
+- Auto-start `minerd` on launch. The miner only runs after you explicitly press **Start Miner** (or **M**), and only if a pool + wallet are configured.
+- Hide the active state. The Dashboard always shows whether the miner is running — including the button itself, which reads **Stop Miner** in red while it is.
+- Make the Stop path more than one action away. The same button (or **M**) stops it. Always.
 
 ---
 
@@ -170,19 +162,25 @@ Mining is **opt-in**. Real CPU load, real electricity, real heat. BitlaForge wil
 - [ ] Optional auto-restart on minerd crash
 - [ ] Notification on accepted-share (rare event, worth surfacing prominently)
 
-### v0.2.0 — Planned (visual identity upgrade)
+### v0.3.0 — Planned (visual identity upgrade)
 - [ ] Sparkline (`▁▂▃▄▅▆▇█`) of hashrate-over-time under the Dashboard's hashrate value
-- [ ] System CPU load sparkline on Setup
 - [ ] Per-thread hashrate mini-bars
 - [ ] Optional `textual-plotext` integration for proper time-series charts (btop-style)
 
-### v0.1.4 — Planned
+### v0.2.0 — August 8, 2026 (current) — **first Forge app on forgekit**
+- [x] Shell replaced by [forgekit](https://github.com/jetomev/forgekit) `ForgeApp` — menu bar with accelerators, section switcher, Help windows, Catppuccin theme, themed scrollbars, compact buttons (net −400 lines)
+- [x] Design simplification (Javier's field review): three sections; **Start/Stop Miner** two-state button + **Test Miner** on the Dashboard; Setup screen → read-only **Help → Install & Setup** window; Miner menu and key legends retired
+- [x] Muscle memory preserved: `1-3`, `M`, `R`, `?`, `q`
+- [x] Headless pilot smoke suite (sections, dialogs, confirm flow, miner guard)
+- Found for forgekit: modal dialogs swallow app-level character keys → apps needing extra close keys must subclass (kit finding #5, queued)
+
+### Planned — next feature cycle (was v0.1.4)
 - [ ] Wallet format validation (bech32 / legacy address shape check)
 - [ ] Pool reachability probe (TCP connect with short timeout) + "Test connection" on Config
 - [ ] Persistent log archive (rotating files in `~/.local/share/bitlaforge/sessions/`)
 - [ ] Per-session lifetime totals across restarts (uptime + accepted/rejected accumulated)
 
-### v0.1.3 — May 29, 2026 (current) — **first AUR release**
+### v0.1.3 — May 29, 2026 — **first AUR release**
 - [x] `testing/RELEASE-CHECKLIST.md` + v0.1.3 Test Matrix
 - [x] Man page `bitlaforge.1`
 - [x] PKGBUILD with hardened headless-mount `check()` + `PYTHONDONTWRITEBYTECODE=1` defenses
@@ -215,6 +213,17 @@ Mining is **opt-in**. Real CPU load, real electricity, real heat. BitlaForge wil
 ---
 
 ## Changelog
+
+### v0.2.0 — August 8, 2026
+
+**The forgekit adoption** — BitlaForge becomes the first Forge Suite app on the shared TUI shell, and the release that road-tested forgekit 0.2.0 itself.
+
+- **New shell**: `BitlaForgeApp` now subclasses `forgekit.ForgeApp`. The hand-rolled sidebar, `Header`, `Footer`, `HelpScreen`, and `ConfirmDialog` (~600 lines with their CSS) are deleted; the menu bar (`Dashboard  Log  Config  Help  Quit`), section switcher, floating Help windows, Catppuccin stylesheet, slim themed scrollbars, and compact one-row buttons all come from the kit.
+- **Design simplification** (field review, same day): the Dashboard's "Quick Actions" key legend is replaced by real buttons — a two-state **Start Miner / Stop Miner** (label and color track the live subprocess) and **Test Miner** (`minerd --version` → toast). The Setup screen is retired as a section and reborn as **Help → Install & Setup**, a read-only floating window rebuilt on every open. The Config screen's helper text is gone. The Miner menu idea was cut in the same review — actions live where the state lives.
+- **Kept**: every line of the miner engine (`miner_runner`, `process_stats`, `system_info`, `config_manager`), the Log section verbatim, `StatusMixin`, and the `1-3 / M / R / ? / q` muscle memory.
+- **New dependency**: [forgekit ≥ 0.2.0](https://github.com/jetomev/forgekit) (GitHub; AUR packaging lands when AUR submissions reopen).
+- **Testing**: new headless pilot smoke suite + live field test (mining session, both button states, all windows).
+- Net: **−406 lines** while gaining the suite look.
 
 ### v0.1.3 — May 29, 2026
 **First AUR release — Forge release machinery.**

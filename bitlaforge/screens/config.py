@@ -14,9 +14,10 @@ from textual.binding import Binding
 from textual.widgets import Label, Static, Input, Button, Select
 from textual.containers import Container, Vertical, Horizontal
 
+from forgekit import ConfirmDialog
+
 from ..config_manager import load_config, save_config, DEFAULT_CONFIG, CONFIG_PATH
 from ..widgets.status import StatusMixin
-from ..widgets.confirm_dialog import ConfirmDialog
 
 
 _DEFAULT_ALGORITHM = DEFAULT_CONFIG["algorithm"]
@@ -34,7 +35,7 @@ class ConfigScreen(StatusMixin, Container):
     # for navigation. The user presses E to enter edit mode (focuses the
     # first input); clicking the sidebar or pressing 1/2/3 navigates out.
     can_focus = True
-    DEFAULT_FOCUS = "#config"
+    DEFAULT_FOCUS = "#sec-config"
 
     BINDINGS = [
         Binding("e", "focus_first",  "Edit", show=True),
@@ -50,11 +51,6 @@ class ConfigScreen(StatusMixin, Container):
     def compose(self) -> ComposeResult:
         with Vertical(classes="main-area"):
             yield Label("⚙   Miner Configuration", classes="section-title")
-            yield Static(
-                "[#a6adc8]Settings used when starting `minerd`. "
-                "Press S to save, E to begin editing.[/]",
-                classes="detail-muted",
-            )
 
             yield Label(
                 "Name  (local label + pool worker name, e.g. \"laptop-rig\")",
@@ -95,9 +91,9 @@ class ConfigScreen(StatusMixin, Container):
             )
             yield Input(placeholder="19", id="config-niceness")
 
-            with Horizontal(classes="config-buttons"):
-                yield Button("Save",         id="btn-save",  classes="primary")
-                yield Button("Revert",       id="btn-revert", classes="warning")
+            with Horizontal(classes="forge-buttons"):
+                yield Button("Save",   id="btn-save", variant="primary")
+                yield Button("Revert", id="btn-revert")
 
             yield Label("", id="config-status")
 
@@ -177,16 +173,14 @@ class ConfigScreen(StatusMixin, Container):
 
         self.app.push_screen(
             ConfirmDialog(
-                title="Save Miner Configuration",
-                message=(
-                    f"Save these settings?\n"
-                    f"  name: {new_config['miner_name']}\n"
-                    f"  pool: {new_config['pool']}\n"
-                    f"  wallet: {new_config['wallet']}\n"
-                    f"  algorithm: {new_config['algorithm']}\n"
-                    f"  threads: {new_config['threads']}\n"
-                    f"  niceness: {new_config['niceness']}"
-                ),
+                "Save these miner settings?\n\n"
+                f"  name       {new_config['miner_name']}\n"
+                f"  pool       {new_config['pool']}\n"
+                f"  wallet     {new_config['wallet']}\n"
+                f"  algorithm  {new_config['algorithm']}\n"
+                f"  threads    {new_config['threads']}\n"
+                f"  niceness   {new_config['niceness']}",
+                "Save",
             ),
             on_confirm,
         )

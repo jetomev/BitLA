@@ -12,8 +12,8 @@ design doc):
 """
 
 from textual.app import ComposeResult
-from textual.widgets import Label, Static
-from textual.containers import Container, Vertical
+from textual.widgets import Button, Label, Static
+from textual.containers import Container, Horizontal, Vertical
 
 from ..widgets.status import StatusMixin
 
@@ -30,7 +30,7 @@ class DashboardScreen(StatusMixin, Container):
     # the whole DOM, which is Log's search Input, and 1/2/3/M get typed
     # into the input instead of triggering app bindings.
     can_focus = True
-    DEFAULT_FOCUS = "#dashboard"
+    DEFAULT_FOCUS = "#sec-dashboard"
 
     def compose(self) -> ComposeResult:
         with Vertical(classes="main-area"):
@@ -40,6 +40,11 @@ class DashboardScreen(StatusMixin, Container):
                 classes="section-title",
             )
             yield Static(id="dashboard-content")
+            # v0.2.0 design ruling: the actions live HERE as buttons — a
+            # two-state Start/Stop + Test — not as a menu or a key legend.
+            with Horizontal(classes="forge-buttons dash-buttons"):
+                yield Button("Start Miner", id="btn-miner-toggle", variant="primary")
+                yield Button("Test Miner",  id="btn-test-miner")
 
     def on_mount(self) -> None:
         self._reload_view()
@@ -159,15 +164,26 @@ class DashboardScreen(StatusMixin, Container):
             "\n"
             f"  [#89b4fa]Uptime        [/]  [#cdd6f4]{uptime_str}[/]\n"
             f"  [#89b4fa]Shares        [/]  [#cdd6f4]{shares_str}[/]\n"
-            "\n"
-            "[bold #cba6f7]── Quick Actions ────────────────────────────────[/]\n"
-            "\n"
-            "  Press [bold #b4befe]M[/]  to start/stop the miner\n"
-            "  Press [bold #b4befe]3[/]  to edit miner configuration\n"
-            "  Press [bold #b4befe]2[/]  to watch the log stream\n"
-            "  Press [bold #b4befe]?[/]  for help\n"
         )
         self.query_one("#dashboard-content", Static).update(content)
+
+        # Two-state button: label + variant track the live miner state.
+        try:
+            btn = self.query_one("#btn-miner-toggle", Button)
+            if stats.running:
+                btn.label = "Stop Miner"
+                btn.variant = "error"
+            else:
+                btn.label = "Start Miner"
+                btn.variant = "primary"
+        except Exception:
+            pass
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "btn-miner-toggle":
+            self.app.run_worker(self.app.action_toggle_miner(), exclusive=False)
+        elif event.button.id == "btn-test-miner":
+            self.app.run_worker(self.app.action_test_minerd(), exclusive=False)
 
     def action_refresh(self) -> None:
         self._reload_view()

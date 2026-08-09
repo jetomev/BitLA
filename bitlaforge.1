@@ -1,6 +1,6 @@
 .\" bitlaforge.1 — BitlaForge man page
 .\" GNU GPL v3 — see LICENSE
-.TH BITLAFORGE 1 "May 2026" "BitlaForge v0.1.3" "User Commands"
+.TH BITLAFORGE 1 "August 2026" "BitlaForge v0.2.0" "User Commands"
 .
 .SH NAME
 bitlaforge \- terminal UI for running solo Bitcoin mining (the lottery)
@@ -39,13 +39,33 @@ BitlaForge writes only to your user-space config at
 .IR ~/.config/bitlaforge/config.toml ;
 no root privileges are required to run, configure, or mine.
 
-The application is organised around four screens, switchable from the sidebar
-or with the number keys:
+Since v0.2.0 the interface is the shared
+.B forgekit
+shell: a top menu bar
+.RB ( Dashboard
+/
+.B Log
+/
+.B Config
+/
+.B Help
+/
+.BR Quit )
+with underlined accelerator letters, and three sections switchable from the
+menu or with the number keys:
 .TP
 .B 1 \(em Dashboard
-Read-only overview: miner state, pool + port, wallet, algorithm, threads,
+Live overview: miner state, pool + port, wallet, algorithm, threads,
 hashrate, uptime, shares (accepted / rejected), per-process minerd CPU% and
-RAM. Uptime ticks live every second while mining.
+RAM. Uptime ticks live every second while mining. Two action buttons:
+.B Start Miner
+(reads
+.B Stop Miner
+in red while the subprocess runs) and
+.B Test Miner
+(runs
+.B minerd --version
+and reports as a toast).
 .TP
 .B 2 \(em Log
 Streaming view of minerd's stdout, line-by-line, in a 5,000-line bounded
@@ -54,18 +74,22 @@ buffer with search filter and auto-scroll.
 .B 3 \(em Config
 Pool URL, wallet address, miner name (used as Stratum worker label),
 algorithm, thread count, niceness.
-.TP
-.B 4 \(em Setup
-System info (CPU model, logical/physical cores, memory, load average),
-minerd install status, AUR install guidance for each cpuminer variant,
-and a "test minerd" action that runs
-.B minerd --version.
+.PP
+The former Setup screen lives on as the
+.B Help \(-> Install & Setup
+window: system info (CPU model, cores, memory, load average), minerd install
+status, AUR install guidance for each cpuminer variant, and paths \(em
+rebuilt fresh on every open.
 .
 .SH KEYBINDINGS
-.SS Global (any screen)
+.SS Global (any section)
 .TP
-.B 1 .. 4
-Switch to the corresponding screen.
+.B 1 .. 3
+Switch to the corresponding section.
+.TP
+.B Ctrl+<letter>
+Menu-bar accelerators \(em the underlined letter of each menu entry.
+Inside an open dropdown, an item's underlined letter selects it.
 .TP
 .B M
 Start / stop the
@@ -75,15 +99,15 @@ SIGKILL if minerd ignores it. If minerd is not on PATH, M surfaces
 install-guidance instead of attempting to spawn.
 .TP
 .B R
-Refresh the current screen's view (re-read disk, re-poll /proc, etc).
+Refresh the current section's view (re-read disk, re-poll /proc, etc).
 .TP
 .B ?
-Toggle the help overlay (press again, or Esc, q, or ? to close).
+Toggle the Shortcuts window (press again, or Esc or q, to close).
 .TP
 .B q
 Quit.
 .
-.SS Log screen
+.SS Log section
 .TP
 .B /
 Focus the search filter input.
@@ -91,7 +115,7 @@ Focus the search filter input.
 .B C
 Clear the log buffer.
 .
-.SS Config screen
+.SS Config section
 .TP
 .B E
 Focus the first input (begin editing).
@@ -101,12 +125,6 @@ Save the current values to
 .IR ~/.config/bitlaforge/config.toml .
 A confirm dialog summarises the changes; Esc cancels, Enter confirms.
 .
-.SS Setup screen
-.TP
-.B T
-Run
-.B minerd --version
-and surface the result in the status line.
 .
 .SH SAFETY
 Mining draws real CPU and electricity. BitlaForge is built around
@@ -150,6 +168,9 @@ python-textual \(>= 8.2.7
 python-rich
 .IP \(bu 2
 python-tomli-w
+.IP \(bu 2
+forgekit \(>= 0.2.0 (the shared Forge Suite TUI shell \(em
+https://github.com/jetomev/forgekit)
 .RE
 .PP
 .B Optional (required to actually mine):
