@@ -43,6 +43,27 @@ It is the fourth tool in the **Forge suite** for KognogOS — alongside [grubFor
 
 ---
 
+## Screenshots
+
+*(Generated straight from the running app — `python docs/screenshots/generate.py` re-renders the gallery each release.)*
+
+**Dashboard — mining** (two-state Start/Stop button tracking the live subprocess)
+![Dashboard mining](docs/screenshots/01-dashboard-running.svg)
+
+**Dashboard — idle**
+![Dashboard idle](docs/screenshots/02-dashboard-stopped.svg)
+
+**Config**
+![Config](docs/screenshots/03-config.svg)
+
+**Help → Install & Setup**
+![Install and Setup](docs/screenshots/04-install-setup.svg)
+
+**Shortcuts window**
+![Shortcuts](docs/screenshots/05-shortcuts.svg)
+
+---
+
 ## Requirements
 
 - Linux
