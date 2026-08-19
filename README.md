@@ -1,6 +1,6 @@
-# ⚡ BitlaForge
+# ⚡ bitlaForge
 
-> A terminal UI for running solo Bitcoin mining as what it really is — a *lottery*. Wraps `minerd`, watches it work, doesn't pretend the odds are anything other than astronomical.
+> A terminal dashboard for solo Bitcoin mining, presented as what it really is — a *lottery*. It runs `minerd`, watches it work, and doesn't pretend the odds are anything but astronomical.
 
 ![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)
 ![Platform: Linux](https://img.shields.io/badge/Platform-Linux-lightgrey.svg)
@@ -9,45 +9,44 @@
 ![Version: 0.2.1](https://img.shields.io/badge/Version-0.2.1-purple.svg)
 [![AUR](https://img.shields.io/aur/version/bitlaforge)](https://aur.archlinux.org/packages/bitlaforge)
 
-> 🛡 **Security:** every release is GPG-signed and every commit GitHub-Verified. Read **[Where We Stand](https://github.com/jetomev/KognogOS/blob/main/docs/where-we-stand.md)** — our response to the 2026 AUR supply-chain attacks, what is current, and how to verify us instead of trusting us.
+> 🛡 **Security** — every release is GPG-signed and every commit is GitHub-Verified. **[Where We Stand](https://github.com/jetomev/KognogOS/blob/main/docs/where-we-stand.md)** covers our response to the 2026 AUR supply-chain attacks and how to check us yourself.
 
 ---
 
-## Why BitlaForge?
+## Why bitlaForge?
 
-Solo Bitcoin mining at today's network difficulty is, statistically, **a lottery**. The chance of finding a block on a single CPU in any given minute is so small it's barely a number. But unlike a pool, if you *do* hit, you take the entire block reward — no per-share split. That's the wager: tiny odds, maximum payout, and a long-running process turning electricity into hashes while you wait.
+Let's be honest about the odds first.
 
-BitlaForge is the dashboard you watch while your machine buys lottery tickets in compute cycles. It launches `minerd`, parses what it says, and shows you the pool, wallet, threads, hashrate, uptime, and shares without you having to keep a terminal window staring at raw output. It also runs cleanly over SSH, which is what you actually want for a headless rig.
+Bitcoin mining is a race to guess a number. Thousands of purpose-built machines are guessing alongside you, and mining "solo" means you're racing them with your CPU. The chance of your computer winning in any given minute is so small it's barely worth writing down.
 
-It is the fourth tool in the **Forge suite** for KognogOS — alongside [grubForge](https://github.com/jetomev/grubforge), [alacrittyForge](https://github.com/jetomev/alacrittyforge), and nogForge. Same Catppuccin Mocha aesthetic, same release discipline, same human + AI co-authorship.
+Most people avoid that by joining a **pool** — everyone guesses together and splits the reward proportionally, so you earn small amounts steadily. Solo mining is the opposite bet: almost certainly nothing, but if you *do* win, the entire block reward is yours. No split.
 
----
+That's the wager. Tiny odds, maximum payout, and a long-running process turning electricity into guesses while you wait.
 
-## Project state
+**bitlaForge is the dashboard you watch while that happens.** It starts `minerd`, reads what it reports, and shows you your pool, wallet, threads, hashrate, uptime and shares — instead of leaving you staring at raw scrolling output. It runs cleanly over SSH, which is what you actually want for a machine sitting in a cupboard.
 
-**v0.2.0 — the first Forge app on [forgekit](https://github.com/jetomev/forgekit).** The hand-rolled sidebar / header / footer / help chrome is gone, replaced by the shared Forge Suite shell: a top **menu bar** with underlined accelerators (mouse and keyboard), a full-width workspace, and the kit's floating windows for Help. The redesign also simplified the surface: **three sections** (Dashboard / Log / Config), a two-state **Start Miner / Stop Miner** button plus **Test Miner** right on the Dashboard, and the old Setup screen reborn as a read-only **Help → Install & Setup** window. The whole miner engine (subprocess lifecycle, live stats tick, log streaming, TOML persistence) carried over from v0.1.x unchanged — net −400 lines.
-
-> This repo used to be `BitLA`, a Qt6/Widgets desktop scaffold that landed in November 2025 with simulation-driven UI and no real miner integration. On 2026-05-28 it pivoted to a Textual TUI under the Forge-suite umbrella. The Qt prototype is preserved permanently as the `v0.1.0-qt-archived` git tag; `main` is the TUI from day one.
+> **This is a hobby project, not financial advice.** Mining costs real electricity and produces real heat. Expect to spend more on power than you earn. Do it because it's interesting.
 
 ---
 
-## Features (v0.2.0)
+## Features
 
-- 🏠 **Dashboard** — live overview driven by parsed minerd output: pool / port / wallet / algorithm / threads / hashrate / accepted / rejected shares / uptime, with per-process CPU and RAM sampled from `/proc`. Two action buttons: **Start Miner** (flips to a red **Stop Miner** while running) and **Test Miner** (`minerd --version` → toast). Persistent **⚠ minerd not detected** banner when the binary isn't on PATH.
-- 📜 **Log** — streaming view of minerd's stdout/stderr line-by-line, with a 5,000-line bounded buffer, **/** to focus search, **C** to clear.
-- ⚙ **Config** — pool URL, wallet, algorithm (sha256d / scrypt / yescrypt / x11 / x13 / x15 / x17 / groestl), thread count, niceness, miner name. **Persisted** to `~/.config/bitlaforge/config.toml`; loads at every launch.
-- 🧭 **forgekit shell** — the Forge Suite menu bar (Dashboard / Log / Config / Help / Quit) with underlined accelerators, Catppuccin Mocha throughout, themed slim scrollbars, compact one-row buttons.
-- 🪟 **Help windows** — Shortcuts, **Install & Setup** (system info + minerd status + AUR providers + paths, rebuilt fresh on every open), License, About — all floating forgekit panels.
-- 💬 **Unified feedback** — `StatusMixin` from the Forge suite: status-line + toast popup, `popup=False` for passive mount hints so launch is quiet.
-- 🎯 **Focus-on-show** — section bindings fire on the first keypress without a panel click.
+- 🏠 **Dashboard** — everything live in one view: pool, port, wallet, algorithm, threads, hashrate, accepted and rejected shares, and uptime, plus how much CPU and memory the miner is actually using.
+
+  Two buttons: **Start Miner** (which becomes a red **Stop Miner** while running) and **Test Miner**, which checks your setup without committing to anything. If `minerd` isn't installed, a banner says so instead of letting you wonder.
+- 📜 **Log** — minerd's output as it happens, keeping the last 5,000 lines. Press **/** to search, **C** to clear.
+- ⚙ **Config** — pool address, wallet, algorithm, thread count, priority, and miner name. Saved to `~/.config/bitlaforge/config.toml` and reloaded every launch.
+- 🪟 **Help windows** — Shortcuts, Install & Setup, License and About. **Install & Setup** checks your system live each time you open it, so it tells you what's actually missing.
+
+Built on [forgekit](https://github.com/jetomev/forgekit), the shared foundation for the Forge apps — so the menus, windows and theme match its siblings.
 
 ---
 
 ## Screenshots
 
-*(Generated straight from the running app — `python docs/screenshots/generate.py` re-renders the gallery each release.)*
+*Generated from the running app — `python docs/screenshots/generate.py` re-renders the gallery each release.*
 
-**Dashboard — mining** (two-state Start/Stop button tracking the live subprocess)
+**Dashboard — mining**
 ![Dashboard mining](docs/screenshots/01-dashboard-running.svg)
 
 **Dashboard — idle**
@@ -59,87 +58,82 @@ It is the fourth tool in the **Forge suite** for KognogOS — alongside [grubFor
 **Help → Install & Setup**
 ![Install and Setup](docs/screenshots/04-install-setup.svg)
 
-**Shortcuts window**
+**Shortcuts**
 ![Shortcuts](docs/screenshots/05-shortcuts.svg)
 
 ---
 
 ## Requirements
 
-- Linux
-- Python 3.11+
+- Linux, Python 3.11 or newer
 - `python-textual`, `python-rich`, `python-tomli-w`
-- [`forgekit`](https://github.com/jetomev/forgekit) ≥ 0.2.1 — the shared Forge Suite TUI shell (GitHub; packaging for AUR arrives when AUR submissions reopen)
-- `minerd` — optional but required to actually mine. AUR-only; install via one of `cpuminer` (recommended, pooler's original), `cpuminer-multi`, or `cpuminer-opt`. **Help → Install & Setup** inside the app has the install commands, and **Test Miner** on the Dashboard verifies the binary.
+- [`forgekit`](https://github.com/jetomev/forgekit) 0.2.1 or newer — on the AUR as `python-forgekit`
+- **`minerd`** — optional to run the app, required to actually mine. See below.
 
 ---
 
 ## Installation
 
-### Arch Linux — AUR (recommended)
+### Arch Linux, from the AUR (recommended)
+
 ```bash
 yay -S bitlaforge
 ```
-Then run `bitlaforge`. The AUR package's `optdepends` will prompt for one of the `cpuminer*` variants to actually mine — install whichever fits your needs (see **Help → Install & Setup** for guidance).
 
-### Arch Linux — from source
-```bash
-sudo pacman -S python-textual python-rich python-tomli-w
-git clone https://github.com/jetomev/forgekit.git
-git clone https://github.com/jetomev/bitlaforge.git
-cd bitlaforge
-PYTHONPATH=../forgekit python main.py
-```
+Then run `bitlaforge`. The package will offer you a `cpuminer` variant to install alongside it — that's what provides `minerd`.
 
-### Other distributions
+### From source
+
 ```bash
-pip install textual rich tomli-w git+https://github.com/jetomev/forgekit
 git clone https://github.com/jetomev/bitlaforge.git
 cd bitlaforge
 python main.py
 ```
 
-### `minerd` itself (required to actually mine)
-The `minerd` binary lives only on the AUR — three providers, pick one. Open **Help → Install & Setup** inside BitlaForge for the full guide; the short version:
+You'll need the dependencies first — on Arch, `sudo pacman -S python-textual python-rich python-tomli-w` and `yay -S python-forgekit`. Elsewhere, `pip install textual rich tomli-w git+https://github.com/jetomev/forgekit`.
+
+### Getting `minerd`
+
+`minerd` is the program that does the actual mining. bitlaForge doesn't include it — it drives it. On Arch it comes from the AUR, and there are three versions to choose from:
 
 ```bash
-yay -S cpuminer          # pooler's original (recommended)
-# or
-yay -S cpuminer-multi    # multi-algorithm fork
-# or
-yay -S cpuminer-opt      # heavily optimised variant
+yay -S cpuminer          # the original (recommended)
+yay -S cpuminer-multi    # supports more algorithms
+yay -S cpuminer-opt      # more heavily optimised
 ```
 
-If `minerd` is missing, BitlaForge still runs — the Dashboard shows a banner, **Help → Install & Setup** has the install commands, and **Start Miner** surfaces install-guidance instead of failing silently.
+If `minerd` is missing, bitlaForge still runs. The Dashboard shows a banner, **Help → Install & Setup** gives you the commands, and pressing Start explains what's needed rather than failing silently.
 
 ---
 
 ## Keybindings
 
-### Global
+### Anywhere
+
 | Key | Action |
 |-----|--------|
-| `1` | Dashboard |
-| `2` | Log |
-| `3` | Config |
-| `M` | Start / Stop miner (same as the Dashboard button) |
-| `T` | Test the miner (`minerd --version` → toast) |
-| `R` | Refresh current section |
-| `?` or `Ctrl+H` | Toggle the Shortcuts window |
+| `1` `2` `3` | Dashboard / Log / Config |
+| `M` | Start or stop the miner |
+| `T` | Test the miner |
+| `R` | Refresh the current section |
+| `?` or `Ctrl+H` | Shortcuts window |
 | `q` | Quit |
-| `Ctrl+…` | Menu-bar accelerators — the underlined letter opens each menu/section; inside a dropdown, an item's underlined letter picks it |
 
-### Log section
+Menu options also work with `Ctrl` plus their underlined letter.
+
+### Log
+
 | Key | Action |
 |-----|--------|
-| `/` | Focus the search filter |
-| `C` | Clear the log buffer |
+| `/` | Search |
+| `C` | Clear the log |
 
-### Config section
+### Config
+
 | Key | Action |
 |-----|--------|
-| `E` | Focus the first input (begin editing) |
-| `S` | Save the current values |
+| `E` | Start editing |
+| `S` | Save |
 
 ---
 
@@ -147,96 +141,116 @@ If `minerd` is missing, BitlaForge still runs — the Dashboard shows a banner, 
 
 ```
 bitlaforge/
-├── main.py                                # Entry point
+├── main.py                     # Entry point
 ├── bitlaforge/
-│   ├── app.py                             # BitlaForgeApp on forgekit.ForgeApp — menu, miner lifecycle, live tick
-│   ├── setup_info.py                      # Body of the Help → Install & Setup window
-│   ├── config_manager.py                  # TOML read/write at ~/.config/bitlaforge/
-│   ├── miner_runner.py                    # Async minerd subprocess + stdout parsing
-│   ├── process_stats.py                   # /proc/<pid>/ CPU% + RAM readouts
-│   ├── system_info.py                     # /proc/cpuinfo + /proc/meminfo + load avg
-│   ├── screens/
-│   │   ├── dashboard.py                   # Live miner overview + Start/Stop + Test buttons
-│   │   ├── log.py                         # 5,000-line bounded buffer + filter
-│   │   └── config.py                      # Pool / wallet / algorithm / threads / name / niceness
-│   └── widgets/
-│       └── status.py                      # StatusMixin (line + toast)
+│   ├── app.py                  # The application, menu, and miner lifecycle
+│   ├── miner_runner.py         # Runs minerd and reads its output
+│   ├── process_stats.py        # CPU and memory usage of the running miner
+│   ├── system_info.py          # Machine details for the setup window
+│   ├── config_manager.py       # Reads and writes your settings
+│   ├── setup_info.py           # Contents of the Install & Setup window
+│   ├── screens/                # Dashboard, Log, Config
+│   └── widgets/                # Status line and toasts
+├── docs/                       # Changelog, roadmap, screenshots
+├── testing/                    # Test matrix and results per version
+└── LICENSE
 ```
 
-The shell chrome (menu bar, section switcher, dialogs, theme, scrollbars) lives in
-[forgekit](https://github.com/jetomev/forgekit) — shared across the Forge Suite.
+The menu bar, windows, theme and scrollbars come from [forgekit](https://github.com/jetomev/forgekit).
 
 ---
 
 ## Safety philosophy
 
-Mining is **opt-in**. Real CPU load, real electricity, real heat. BitlaForge will never:
+Mining is **opt-in, always.** It's real CPU load, real electricity and real heat, so bitlaForge will never:
 
-- Auto-start `minerd` on launch. The miner only runs after you explicitly press **Start Miner** (or **M**), and only if a pool + wallet are configured.
-- Hide the active state. The Dashboard always shows whether the miner is running — including the button itself, which reads **Stop Miner** in red while it is.
-- Make the Stop path more than one action away. The same button (or **M**) stops it. Always.
+- **Start mining on its own.** The miner runs only after you press **Start Miner** (or `M`), and only once a pool and wallet are configured.
+- **Hide that it's running.** The Dashboard always shows the state, including the button itself, which reads **Stop Miner** in red while active.
+- **Make stopping difficult.** The same button, or `M`, stops it. One action, always.
 
 ---
 
 ## Roadmap
 
-### Future
-- [ ] Pool reachability check on save (not just on start)
-- [ ] Multi-config profiles (switch between pools / wallets / algorithms with one key)
-- [ ] Optional auto-restart on minerd crash
-- [ ] Notification on accepted-share (rare event, worth surfacing prominently)
+### Next — v0.3.0: make it worth watching
 
-### v0.3.0 — Planned (visual identity upgrade)
-- [ ] Sparkline (`▁▂▃▄▅▆▇█`) of hashrate-over-time under the Dashboard's hashrate value
-- [ ] Per-thread hashrate mini-bars
-- [ ] Optional `textual-plotext` integration for proper time-series charts (btop-style)
+Right now the Dashboard tells you the hashrate. It should *show* it.
 
-### v0.2.1 — August 9, 2026 (current) — window-polish batch
-- [x] Shortcuts window rewritten to the combined-key spec (`Ctrl+D or 1` …) with `Esc` / menu-navigation entries; key column auto-aligns (kit F-6)
-- [x] **T** key restored: keyboard twin of the Dashboard's Test Miner button; **Ctrl+H** now toggles Shortcuts directly
-- [x] Windows hug their content (kit F-7) and buttons live in a thin **fixed footer under a divider** — always visible even when Install & Setup scrolls (kit F-8; the ruling that reshaped every Forge dialog to come)
-- [x] Requires forgekit ≥ 0.2.1
+- [ ] **A sparkline** of hashrate over time, under the number
+- [ ] **Per-thread bars**, so you can see if one core is lagging
+- [ ] **Proper time-series charts**, the way system monitors do it
 
-### v0.2.0 — August 8, 2026 — **first Forge app on forgekit**
-- [x] Shell replaced by [forgekit](https://github.com/jetomev/forgekit) `ForgeApp` — menu bar with accelerators, section switcher, Help windows, Catppuccin theme, themed scrollbars, compact buttons (net −400 lines)
-- [x] Design simplification (Javier's field review): three sections; **Start/Stop Miner** two-state button + **Test Miner** on the Dashboard; Setup screen → read-only **Help → Install & Setup** window; Miner menu and key legends retired
-- [x] Muscle memory preserved: `1-3`, `M`, `R`, `?`, `q`
-- [x] Headless pilot smoke suite (sections, dialogs, confirm flow, miner guard)
-- Found for forgekit: modal dialogs swallow app-level character keys → apps needing extra close keys must subclass (kit finding #5, queued)
+### Also planned
 
-### Planned — next feature cycle (was v0.1.4)
-- [ ] Wallet format validation (bech32 / legacy address shape check)
-- [ ] Pool reachability probe (TCP connect with short timeout) + "Test connection" on Config
-- [ ] Persistent log archive (rotating files in `~/.local/share/bitlaforge/sessions/`)
-- [ ] Per-session lifetime totals across restarts (uptime + accepted/rejected accumulated)
+- [ ] **Check your wallet address is valid** before you mine to it for a week
+- [ ] **Test whether the pool is reachable** when you save, not just when you start
+- [ ] **Keep session logs** so a run's history survives a restart
+- [ ] **Lifetime totals** across restarts — uptime and shares accumulated
+- [ ] **Switch between saved setups** with one key
+- [ ] **Optionally restart** the miner if it crashes
+- [ ] **Tell you loudly if a share is accepted** — it's rare enough to deserve it
 
+### v0.2.1 — August 9, 2026 (current)
 
-*Older roadmap entries live in [docs/ROADMAP.md](docs/ROADMAP.md).*
+- [x] Shortcuts window rewritten so each line shows both ways to trigger something
+- [x] `T` restored as the keyboard twin of the Test Miner button; `Ctrl+H` opens Shortcuts directly
+- [x] Windows now fit their content, and **buttons sit in a fixed footer** so Close can never scroll out of view — a ruling that reshaped every Forge dialog since
+
+### v0.2.0 — August 8, 2026 — the first Forge app on forgekit
+
+- [x] The hand-built menus, header, footer and dialogs were replaced by the shared foundation — about 400 fewer lines while gaining the suite's look
+- [x] Simplified to three sections, with real buttons on the Dashboard instead of a key legend
+- [x] The old Setup screen became a read-only **Help → Install & Setup** window that checks your system fresh each time
+- [x] Existing muscle memory kept working: `1-3`, `M`, `R`, `?`, `q`
+- [x] The whole mining engine carried over unchanged
+
+*Older entries live in [docs/ROADMAP.md](docs/ROADMAP.md).*
+
+---
 
 ## Changelog
 
 ### v0.2.1 — August 9, 2026
 
-**Window-polish batch** — the second same-week field review, all landed in the right layers:
+**A window-polish batch**, from the second hands-on review that week.
 
-- **Shortcuts window**: content rewritten to Javier's spec — combined keys per line (`Ctrl+D or 1  Dashboard`), `T — Test the miner`, `Esc`, `Enter/↑↓` menu navigation; the key column auto-sizes (forgekit F-6).
-- **Keys**: `T` restored as the keyboard twin of Test Miner; `Ctrl+H` toggles the Shortcuts window directly.
-- **Window anatomy** (forgekit F-7 + F-8): panels hug their content instead of a fixed 80% height, long bodies (Install & Setup) cap and scroll, and **buttons moved to a thin fixed footer under a divider** — the Close button can never scroll out of view again. Footer kept tight: divider + button row + one breath of air.
-- Requires **forgekit ≥ 0.2.1**.
+- **Shortcuts window** — each line now shows both ways to do something (`Ctrl+D or 1  Dashboard`), the key column sizes itself, and `Esc` and menu navigation are documented.
+- **Keys** — `T` is back as the keyboard equivalent of Test Miner, and `Ctrl+H` opens the Shortcuts window directly.
+- **Window anatomy** — windows hug their content instead of always filling most of the screen, long ones scroll, and **buttons moved into a thin fixed footer under a divider**. Previously, opening a long window could scroll the Close button out of sight. Every Forge dialog built since follows this.
+
+Requires forgekit 0.2.1 or newer.
 
 ### v0.2.0 — August 8, 2026
 
-**The forgekit adoption** — BitlaForge becomes the first Forge Suite app on the shared TUI shell, and the release that road-tested forgekit 0.2.0 itself.
+**The forgekit adoption.** bitlaForge became the first Forge app to move onto the shared foundation, and the one that road-tested it.
 
-- **New shell**: `BitlaForgeApp` now subclasses `forgekit.ForgeApp`. The hand-rolled sidebar, `Header`, `Footer`, `HelpScreen`, and `ConfirmDialog` (~600 lines with their CSS) are deleted; the menu bar (`Dashboard  Log  Config  Help  Quit`), section switcher, floating Help windows, Catppuccin stylesheet, slim themed scrollbars, and compact one-row buttons all come from the kit.
-- **Design simplification** (field review, same day): the Dashboard's "Quick Actions" key legend is replaced by real buttons — a two-state **Start Miner / Stop Miner** (label and color track the live subprocess) and **Test Miner** (`minerd --version` → toast). The Setup screen is retired as a section and reborn as **Help → Install & Setup**, a read-only floating window rebuilt on every open. The Config screen's helper text is gone. The Miner menu idea was cut in the same review — actions live where the state lives.
-- **Kept**: every line of the miner engine (`miner_runner`, `process_stats`, `system_info`, `config_manager`), the Log section verbatim, `StatusMixin`, and the `1-3 / M / R / ? / q` muscle memory.
-- **New dependency**: [forgekit ≥ 0.2.0](https://github.com/jetomev/forgekit) (GitHub; AUR packaging lands when AUR submissions reopen).
-- **Testing**: new headless pilot smoke suite + live field test (mining session, both button states, all windows).
-- Net: **−406 lines** while gaining the suite look.
+The hand-rolled sidebar, header, footer, help screen and confirmation dialog — around 600 lines with their styling — were deleted. The menu bar, section switching, floating windows, theme and scrollbars all come from the shared library now.
 
+A same-day review then simplified the app itself. The Dashboard's list of keyboard hints became real buttons: a two-state **Start / Stop Miner** whose label and colour follow the actual process, and **Test Miner**. The Setup screen stopped being a section and became a Help window, rebuilt each time it opens so it always reflects reality. A "Miner" menu was considered and cut — actions belong where the state is, not in a menu.
+
+Everything that does the actual work carried over untouched: the miner process handling, statistics, system info, config storage, and the Log section. Your muscle memory kept working too.
+
+Net result: 406 fewer lines, and it looks like the rest of the suite.
 
 *The complete history lives in [docs/CHANGELOG.md](docs/CHANGELOG.md).*
+
+---
+
+## A note on this repo's history
+
+This was once **BitLA**, a Qt desktop prototype from November 2025 with a simulated interface and no real miner behind it. In May 2026 it was rebuilt as a terminal application under the Forge suite. The original prototype is preserved on the `v0.1.0-qt-archived` tag; `main` has been the terminal version from its first commit.
+
+---
+
+## Related Projects
+
+- **[KognogOS](https://github.com/jetomev/KognogOS)** — the distribution the Forge suite ships with
+- **[forgekit](https://github.com/jetomev/forgekit)** — the shared foundation for the Forge apps
+- **[nog](https://github.com/jetomev/nog)** — tier-aware package manager
+- **[grubForge](https://github.com/jetomev/grubforge)** — bootloader manager
+- **[alacrittyForge](https://github.com/jetomev/alacrittyforge)** — terminal configurator
+
+---
 
 ## Authors
 
@@ -244,7 +258,9 @@ Mining is **opt-in**. Real CPU load, real electricity, real heat. BitlaForge wil
 
 **Claude (Anthropic)** — co-developer, architecture, implementation
 
-BitlaForge is built as a real collaboration between a human with an idea and an AI that helps bring it to life — one commit at a time. The co-authorship is preserved in the [Forge-suite recognition thesis](https://github.com/jetomev/grubforge): public projects that demonstrate AI as a serious software collaborator, not a black-box code generator. Co-author credit appears in commits, README, man pages, PKGBUILD, and release notes.
+bitlaForge is a real collaboration between a human with an idea and an AI that helps build it — one commit at a time. Co-author credit appears in the commits, this README, the man page, the package and the release notes, on purpose.
+
+If you're curious how a human and an AI actually work together on software like this, we wrote it down: **[Building grubForge with AI](https://github.com/jetomev/grubforge/blob/main/docs/AI-COLLABORATION.md)**.
 
 ---
 
@@ -256,4 +272,6 @@ GPL v3. See [LICENSE](LICENSE).
 
 ## Contributing
 
-This is alpha software — UI feedback, bug reports, and ideas welcome via GitHub Issues. If you find BitlaForge useful, consider starring the repo. The Forge-suite recognition thesis only works if these projects are visible.
+This is alpha software — feedback, bug reports and ideas are all welcome via GitHub Issues.
+
+If you find bitlaForge useful, a star genuinely helps. These projects only make their case if people can find them.
