@@ -1,4 +1,4 @@
-# BitlaForge — full changelog
+# bitlaForge — full changelog
 
 *The README carries the two most recent entries; the complete history lives here, newest-first.*
 
